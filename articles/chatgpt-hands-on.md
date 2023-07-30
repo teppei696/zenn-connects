@@ -44,7 +44,7 @@ published: true
 ## 2-1. LINE Business ID の作成
 
 以下のリンクにアクセスし、LINE Business ID のアカウントを作成してください  
-https://account.line.biz/login  
+https://account.line.biz/login?redirectUri=https%3A%2F%2Fmanager.line.biz%2F  
 ![LINE 01](/images/chatgpt-hands-on/line-01-01.png)
 
 ## 2-2. LINE Developers ID ログイン画面を開く
@@ -103,11 +103,12 @@ https://account.line.biz/login?redirectUri=https%3A%2F%2Fdevelopers.line.biz%2Fc
 ## 2-10. 「応答設定」画面を開く
 
 「LINE 公式アカウント機能 > 応答メッセージ > 編集」リンクをクリックし、「応答設定」画面を開く  
+※新しい画面「LINE Official Account Manager」が開きます  
 ![LINE 09](/images/chatgpt-hands-on/line-09.png)
 
 ## 2-11. 「応答設定」
 
-応答設定を実施後、画面を閉じてください  
+「LINE Official Account Manager」画面にて応答設定を実施後、画面を閉じてください  
 ![LINE 10](/images/chatgpt-hands-on/line-10.png)
 |入力項目|入力値|
 |----|----|
@@ -286,3 +287,79 @@ ACTIONS より「Make a request」モジュールを選択
 ## 6-4. openai アプリの送信検証
 
 「make」画面で「Run Once」ボタンクリック後、LINE からメッセージを送信し、応答が LINE で返ってくることを確認
+
+# 7. openai API の各種パラメータについて
+
+## 7-1. 概要
+
+openai の API を呼び出す際、以下のようなパラメータを設定しています。
+
+```
+{
+    "model": "gpt-3.5-turbo",
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are a helpful assistant."
+        },
+        {
+            "role": "user",
+            "content": "Hello!"
+        }
+    ]
+}
+```
+
+基本的には以下のページに詳細が記載されています  
+https://platform.openai.com/docs/api-reference/introduction
+
+## 7-2. model
+
+model には 利用するモデル名を設定します  
+※例）gpt-4, gpt-3.5-turbo
+
+## 7-3. messages
+
+messages は role、content を指定することで、実際の質問文、応答する際の役割などを設定することができます
+| role の種類 | content に設定する値 |
+| ----------- | -------------------------------------------------------------------------------------- |
+| user | ユーザからの質問を設定 |
+| system | 応答時の制約を設定（丁寧に答えてくれとか、〜〜〜の選択肢の中からだけ回答してくれとか） |
+| assistant | 今まで openai api からの回答を設定することで文脈を踏まえて回答できるようにしてくれる |
+
+## 7-4. temperature / top_p
+
+回答のランダム性を設定します。
+
+### temperature (0〜2)
+
+0: 毎回同じ回答を返す  
+2: よりランダムに回答を返す
+
+### top_p (0〜1)
+
+0.1: 確率の高い上位 10%の候補から選択された回答を返す
+
+## 7-5. n
+
+応答ごとに生成する候補の数  
+指定した数分の応答を生成するので、トークンをより多く消費します
+
+## 7-6. stream
+
+設定すると、ChatGPT と同様に部分的な応答が送信されます。 トークンは、使用可能になると data-only server-sent イベントとして送信され、ストリームは data: [DONE] メッセージで終了します
+
+## 7-7. max_tokens
+
+生成された回答に許可されるトークンの最大数  
+既定では、モデルが返すことができるトークンの数は (4096 - プロンプト トークン) になります
+
+## 7-8. frequency_penalty
+
+-2.0 から 2.0 の数値  
+値を正にすると、これまでのテキストに存在する頻度に基づいて新しいトークンにペナルティが課せられ、モデルが同じ行を逐語的に繰り返す可能性が低下
+
+## 7-9. presence_penalty
+
+-2.0 から 2.0 の数値  
+正の値を指定すると、これまでのテキストに出現するかどうかに基づいて新しいトークンにペナルティが課せられ、モデルが新しいトピックを扱う可能性が高まる
