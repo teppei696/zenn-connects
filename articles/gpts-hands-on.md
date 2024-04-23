@@ -16,7 +16,7 @@ published: true
 
 ## 1-1. ログイン
 
-「[ChatGPT](https://chat.openai.com/)」画面にアクセスし、「ログイン」ボタンをウリック
+「[ChatGPT](https://chat.openai.com/)」画面にアクセスし、「ログイン」ボタンをクリック
 ![11](/images/gpts-hands-on/11.png)
 
 ## 1-2. GPTs画面に遷移
